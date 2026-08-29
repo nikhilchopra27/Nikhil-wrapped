@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Nikhil Wrapped 2026</title>
+<style>
+  @font-face{
+    /* Spotify uses "Circular" — we fall back to the closest widely-available geometric sans */
+    font-family:'CircularFallback';
+    src:local('Helvetica Neue'),local('Arial');
+  }
+  :root{
+    --bg:#000000;
+    --card:#121212;
+    --card-2:#181818;
+    --green:#1DB954;
+    --green-bright:#1ED760;
+    --muted:#a7a7a7;
+    --white:#ffffff;
+    --slide-h: 100dvh;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;background:var(--bg);color:var(--white);
+    font-family:'CircularFallback',-apple-system,'Helvetica Neue',Helvetica,Arial,sans-serif;
+    overflow:hidden;
+  }
+
+  /* ---------- App chrome ---------- */
+  .phone{
+    max-width:460px;margin:0 auto;position:relative;height:100dvh;
+    background:#000;overflow:hidden;
+  }
+
+  .storybar{
+    position:absolute;top:0;left:0;right:0;z-index:30;
+    display:flex;gap:4px;padding:10px 12px 0;
+  }
+  .seg{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.28);overflow:hidden;}
+  .seg i{display:block;height:100%;width:0%;background:#fff;border-radius:3px;}
+  .seg.done i{width:100%;}
+  .seg.active i{width:0%;animation:fill 6s linear forwards;}
+  @keyframes fill{to{width:100%;}}
+
+  .topnav{
+    position:absolute;top:22px;left:0;right:0;z-index:30;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:8px 14px;
+  }
+  .whoami{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;}
+  .avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1ED760,#0a5c2b);display:grid;place-items:center;font-size:12px;font-weight:800;color:#04240f;}
+  .closeX{color:#fff;opacity:.85;font-size:20px;line-height:1;padding:4px 8px;}
+
+  .tapzone{position:absolute;inset:0;top:0;display:flex;z-index:10;}
+  .tapzone .half{flex:1;}
+
+  /* ---------- Slides ---------- */
+  .slides{position:relative;height:100%;}
+  .slide{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:0 28px;
+    opacity:0;pointer-events:none;transition:opacity .25s ease;
+  }
+  .slide.show{opacity:1;pointer-events:auto;}
+
+  .eyebrow{
+    color:var(--green-bright);font-weight:800;letter-spacing:.14em;
+    font-size:12px;text-transform:uppercase;margin-bottom:14px;
+  }
+  h1.headline{
+    font-size:clamp(34px,10vw,54px);
+    line-height:.98;letter-spacing:-.03em;font-weight:800;
+    margin:0 0 16px;
+  }
+  .sub{color:#eaeaea;font-size:16px;line-height:1.5;margin:0;max-width:34ch;}
+  .accent{color:var(--green-bright);}
+
+  .bignum{font-size:clamp(64px,22vw,120px);font-weight:800;line-height:.9;letter-spacing:-.04em;margin:6px 0 4px;}
+  .unit{color:var(--muted);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.08em;}
+
+  .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px;}
+  .stat{background:var(--card-2);border-radius:14px;padding:16px;}
+  .stat .k{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;}
+  .stat .v{font-size:24px;font-weight:800;margin-top:6px;}
+
+  .track{
+    display:flex;align-items:center;gap:16px;background:var(--card-2);
+    border-radius:16px;padding:16px;margin-top:22px;
+  }
+  .cover{
+    width:64px;height:64px;flex:0 0 64px;border-radius:6px;
+    background:linear-gradient(135deg,#1ED760,#0f5c2e);
+    display:grid;place-items:center;font-size:26px;color:#04240f;
+  }
+  .trackmeta{min-width:0;}
+  .trackname{font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .trackartist{color:var(--muted);font-size:13px;margin-top:2px;}
+  .playbtn{
+    margin-left:auto;flex:0 0 auto;width:40px;height:40px;border-radius:50%;
+    background:var(--green);border:0;display:grid;place-items:center;color:#000;font-size:15px;cursor:pointer;
+  }
+  .progressline{height:3px;background:#3a3a3a;border-radius:3px;margin-top:14px;overflow:hidden;}
+  .progressline i{display:block;height:100%;width:0%;background:var(--green-bright);border-radius:3px;}
+  .timecaps{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:6px;}
+  .caption{color:var(--muted);font-size:13px;margin-top:14px;min-height:18px;}
+
+  .personality-badge{
+    display:inline-flex;align-items:center;gap:8px;background:var(--card-2);
+    border-radius:999px;padding:10px 16px;margin-top:20px;font-weight:800;font-size:14px;
+  }
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green-bright);}
+
+  .bottomcta{position:absolute;left:0;right:0;bottom:0;z-index:30;padding:16px 20px calc(20px + env(safe-area-inset-bottom));}
+  .sharebtn{
+    width:100%;border:0;border-radius:999px;background:var(--white);color:#000;
+    font-weight:800;font-size:15px;padding:15px;cursor:pointer;
+  }
+  .sharebtn:active{transform:scale(.98);}
+
+  .logo{
+    position:absolute;bottom:76px;left:0;right:0;text-align:center;z-index:20;
+    display:flex;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:12px;font-weight:700;
+  }
+  .logo svg{width:16px;height:16px;}
+
+  .footer-disclaimer{
+    position:absolute;bottom:100px;left:0;right:0;text-align:center;color:#555;font-size:10px;padding:0 24px;z-index:5;
+  }
+
+  /* slide-specific backgrounds, each a distinct Wrapped-style plate */
+  #s1{background:radial-gradient(120% 90% at 20% 0%,#1a1a1a 0%,#000 60%);}
+  #s2{background:linear-gradient(160deg,#0b3b1e 0%,#000 65%);}
+  #s3{background:#000;}
+  #s4{background:linear-gradient(160deg,#141414 0%,#000 70%);}
+  #s5{background:radial-gradient(120% 80% at 80% 100%,#123521 0%,#000 60%);}
+  #s6{background:linear-gradient(160deg,#101010 0%,#000 70%);}
+
+  @media(min-width:461px){
+    .phone{border-radius:36px;box-shadow:0 0 0 10px #111,0 30px 60px rgba(0,0,0,.6);margin-top:2vh;height:96vh;}
+  }
+</style>
+</head>
+<body>
+<div class="phone" id="phone">
+
+  <div class="storybar" id="storybar"></div>
+  <div class="topnav">
+    <div class="whoami">
+      <div class="avatar">N</div>
+      Nikhil's 2026 Wrapped
+    </div>
+    <div class="closeX">✕</div>
+  </div>
+
+  <div class="tapzone" id="tapzone">
+    <div class="half" data-dir="-1"></div>
+    <div class="half" data-dir="1"></div>
+  </div>
+
+  <div class="slides">
+
+    <section class="slide show" id="s1">
+      <div class="eyebrow">Your year in music</div>
+      <h1 class="headline">Nikhil,<br>you were<br><span class="accent">something.</span></h1>
+      <p class="sub">We analysed absolutely none of your listening data and still arrived at some very confident conclusions.</p>
+    </section>
+
+    <section class="slide" id="s2">
+      <div class="eyebrow">Your top genre</div>
+      <div class="bignum" style="font-size:clamp(30px,9vw,46px);">Academic Panic™</div>
+      <p class="sub">A niche but prolific scene. You were, statistically, its only listener.</p>
+    </section>
+
+    <section class="slide" id="s3">
+      <div class="eyebrow">Your top track</div>
+      <div class="track">
+        <div class="cover">▶</div>
+        <div class="trackmeta">
+          <div class="trackname">I'll Do It Tomorrow</div>
+          <div class="trackartist">Nikhil • 2026 Remaster</div>
+        </div>
+        <button class="playbtn" id="play" aria-label="Play preview">▶</button>
+      </div>
+      <div class="progressline"><i id="playfill"></i></div>
+      <div class="timecaps"><span id="tcur">0:00</span><span>0:03</span></div>
+      <div class="caption" id="caption">Tap play to stream your #1 track.</div>
+    </section>
+
+    <section class="slide" id="s4">
+      <div class="eyebrow">Your totally legitimate statistics</div>
+      <div class="statgrid">
+        <div class="stat"><div class="k">Procrastination</div><div class="v">1,847 hrs</div></div>
+        <div class="stat"><div class="k">"5 minutes"</div><div class="v">∞ times</div></div>
+        <div class="stat"><div class="k">Fridge visits</div><div class="v">4,291</div></div>
+        <div class="stat"><div class="k">Plans changed</div><div class="v">87%</div></div>
+      </div>
+    </section>
+
+    <section class="slide" id="s5">
+      <div class="eyebrow">Your listening personality</div>
+      <h1 class="headline" style="font-size:clamp(28px,8vw,40px);">The<br>"I'll Figure It Out"</h1>
+      <p class="sub">You don't always know what's happening. But somehow, you're usually involved.</p>
+      <div class="personality-badge"><span class="dot"></span>1 of 500 personality types</div>
+    </section>
+
+    <section class="slide" id="s6">
+      <div class="eyebrow">Congratulations</div>
+      <h1 class="headline" style="font-size:clamp(30px,8vw,42px);">Top <span class="accent">0.01%</span></h1>
+      <p class="sub">…of people who say "I'm almost there" while still at home.</p>
+    </section>
+
+  </div>
+
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="11" fill="#1DB954"/>
+      <path d="M6.5 9.2c3.6-1.1 8-.7 11 1.1M7 12.4c3-.9 6.7-.6 9.2.9M7.4 15.4c2.5-.7 5.4-.5 7.5.7" stroke="#000" stroke-width="1.4" stroke-linecap="round"/>
+    </svg>
+    Wrapped
+  </div>
+  <div class="footer-disclaimer">Unofficial &amp; fictional fan page. Not affiliated with Spotify AB.</div>
+
+  <div class="bottomcta">
+    <button class="sharebtn" id="shareBtn">Share your Wrapped</button>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const bar = document.getElementById('storybar');
+  const total = slides.length;
+  let idx = 0;
+  let timer = null;
+  const DURATION = 6000;
+
+  // build progress segments
+  slides.forEach(()=>{
+    const seg = document.createElement('div');
+    seg.className = 'seg';
+    const i = document.createElement('i');
+    seg.appendChild(i);
+    bar.appendChild(seg);
+  });
+  const segs = Array.from(bar.children);
+
+  function render(){
+    slides.forEach((s,i)=> s.classList.toggle('show', i===idx));
+    segs.forEach((seg,i)=>{
+      seg.classList.remove('active','done');
+      const i_el = seg.querySelector('i');
+      if(i===idx){ seg.classList.add('active'); }
+      else if(i<idx){ seg.classList.add('done'); }
+      else { i_el.style.width='0%'; }
+    });
+  }
+
+  function next(){
+    if(idx < total-1){ idx++; render(); restart(); }
+    else { idx = total-1; render(); clearTimeout(timer); }
+  }
+  function prev(){
+    if(idx > 0){ idx--; render(); restart(); }
+    else { render(); restart(); }
+  }
+  function restart(){
+    clearTimeout(timer);
+    if(idx < total-1){ timer = setTimeout(next, DURATION); }
+  }
+
+  document.querySelectorAll('.tapzone .half').forEach(h=>{
+    h.addEventListener('click', ()=>{
+      const dir = parseInt(h.dataset.dir,10);
+      if(dir<0) prev(); else next();
+    });
+  });
+
+  render();
+  restart();
+
+  // Track "player" on slide 3
+  const playBtn = document.getElementById('play');
+  const fill = document.getElementById('playfill');
+  const tcur = document.getElementById('tcur');
+  const caption = document.getElementById('caption');
+  let playing = false, raf, start;
+
+  playBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    if(playing) return;
+    playing = true;
+    clearTimeout(timer); // pause story advance while "listening"
+    playBtn.textContent = '❚❚';
+    start = performance.now();
+    const durMs = 3000;
+
+    function tick(now){
+      const t = Math.min(now-start, durMs);
+      const pct = (t/durMs)*100;
+      fill.style.width = pct+'%';
+      tcur.textContent = '0:0'+ (t/1000).toFixed(0<t?1:0).toString().slice(0,1) === '0' ? '0:00' : tcur.textContent;
+      tcur.textContent = '0:0' + Math.min(3, Math.floor(t/1000));
+      if(t < durMs){
+        raf = requestAnimationFrame(tick);
+      } else {
+        playBtn.textContent = '▶';
+        playing = false;
+        caption.textContent = '“Wait, what was I doing?” — Nikhil, 2026';
+        restart();
+      }
+    }
+    caption.textContent = 'Now playing…';
+    raf = requestAnimationFrame(tick);
+  });
+
+  document.getElementById('shareBtn').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const btn = e.currentTarget;
+    const original = btn.textContent;
+    btn.textContent = 'Link copied ✓';
+    setTimeout(()=>{ btn.textContent = original; }, 1600);
+  });
+})();
+</script>
+</body>
+</html>
