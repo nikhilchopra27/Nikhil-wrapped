@@ -3,155 +3,313 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Nikhil Wrapped 2026</title>
+<title>Nikhil's Spooky Wrapped</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  @font-face{
-    /* Spotify uses "Circular" — we fall back to the closest widely-available geometric sans */
-    font-family:'CircularFallback';
-    src:local('Helvetica Neue'),local('Arial');
-  }
   :root{
-    --bg:#000000;
-    --card:#121212;
-    --card-2:#181818;
-    --green:#1DB954;
-    --green-bright:#1ED760;
-    --muted:#a7a7a7;
-    --white:#ffffff;
-    --slide-h: 100dvh;
+    --bg:#050000;
+    --card:#150404;
+    --card-2:#1c0606;
+    --red:#e10600;
+    --red-bright:#ff2a2a;
+    --muted:#c98d8d;
+    --white:#fdf3f0;
+    --font-display:'Bangers','Impact',cursive;
+    --font-body:'Inter',-apple-system,'Helvetica Neue',Helvetica,Arial,sans-serif;
+    --font-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,monospace;
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
   body{
     margin:0;background:var(--bg);color:var(--white);
-    font-family:'CircularFallback',-apple-system,'Helvetica Neue',Helvetica,Arial,sans-serif;
+    font-family:var(--font-body);
     overflow:hidden;
   }
 
-  /* ---------- App chrome ---------- */
-  .phone{
-    max-width:460px;margin:0 auto;position:relative;height:100dvh;
-    background:#000;overflow:hidden;
+  .phone{max-width:460px;margin:0 auto;position:relative;height:100dvh;background:#000;overflow:hidden;}
+
+  /* moonlit night-sky base, sits behind everything */
+  .nightsky{position:absolute;inset:0;z-index:0;background:
+    radial-gradient(120px 120px at 78% 12%, rgba(255,255,255,.9) 0%, rgba(255,255,255,.5) 35%, rgba(255,255,255,0) 70%),
+    radial-gradient(60% 45% at 78% 12%, rgba(200,210,255,.18) 0%, rgba(0,0,0,0) 70%),
+    linear-gradient(180deg,#050608 0%,#0a0206 45%,#000 100%);
+  }
+  .moon{position:absolute;top:6%;right:10%;width:64px;height:64px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff,#cfd6e6 60%,#9aa3b8 100%);
+    box-shadow:0 0 40px 14px rgba(255,255,255,.35);z-index:1;opacity:.9;}
+
+  /* webbed vignette, drawn once, sits above the sky */
+  .webbg{position:absolute;inset:0;z-index:1;opacity:.32;pointer-events:none;}
+  .webbg svg{width:100%;height:100%;}
+
+  /* corner cobwebs */
+  .corner-web{position:absolute;z-index:2;opacity:.55;pointer-events:none;}
+  .corner-web.tl{top:0;left:0;width:110px;height:110px;}
+  .corner-web.br{bottom:0;right:0;width:130px;height:130px;transform:rotate(180deg);}
+
+  /* dangling spiders on threads */
+  .dangler{position:absolute;z-index:6;pointer-events:none;transform-origin:top center;}
+  .dangler .thread{stroke:#e8e8e8;stroke-width:1;opacity:.8;}
+  .dangler.d1{top:0;left:22%;animation:bob 4.2s ease-in-out infinite;}
+  .dangler.d2{top:0;left:70%;animation:bob 3.4s ease-in-out infinite .6s;}
+  @keyframes bob{
+    0%,100%{transform:translateY(0) rotate(-4deg);}
+    50%{transform:translateY(10px) rotate(4deg);}
   }
 
-  .storybar{
-    position:absolute;top:0;left:0;right:0;z-index:30;
-    display:flex;gap:4px;padding:10px 12px 0;
+  /* drifting fog along the bottom */
+  .fog{position:absolute;left:-20%;right:-20%;bottom:0;height:26%;z-index:3;pointer-events:none;
+    background:linear-gradient(0deg, rgba(20,0,0,.55) 0%, rgba(20,0,0,0) 100%);
+    filter:blur(1px);}
+  .fog::before,.fog::after{
+    content:"";position:absolute;bottom:0;width:70%;height:100%;
+    background:radial-gradient(ellipse at center, rgba(120,120,120,.22) 0%, rgba(120,120,120,0) 70%);
+    animation:drift 14s linear infinite;
   }
-  .seg{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.28);overflow:hidden;}
-  .seg i{display:block;height:100%;width:0%;background:#fff;border-radius:3px;}
+  .fog::before{left:-10%;}
+  .fog::after{left:40%;animation-duration:19s;animation-direction:reverse;}
+  @keyframes drift{
+    0%{transform:translateX(-10%);}
+    50%{transform:translateX(10%);}
+    100%{transform:translateX(-10%);}
+  }
+
+  /* floating embers */
+  .embers{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;}
+  .ember{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;
+    background:#ff2a2a;box-shadow:0 0 6px 2px rgba(255,42,42,.6);
+    animation:rise linear infinite;opacity:0;}
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0);opacity:0;}
+    10%{opacity:.9;}
+    100%{transform:translateY(-820px) translateX(20px);opacity:0;}
+  }
+
+  /* faint swinging silhouette, purely original geometric shape, not a reproduction of any specific artwork */
+  .swinger{position:absolute;z-index:2;opacity:.5;pointer-events:none;
+    top:14%;left:50%;transform-origin:top center;
+    animation:swing 5.5s ease-in-out infinite;}
+  @keyframes swing{
+    0%,100%{transform:translateX(-50%) rotate(-14deg);}
+    50%{transform:translateX(-50%) rotate(14deg);}
+  }
+
+  .storybar{position:absolute;top:0;left:0;right:0;z-index:30;display:flex;gap:4px;padding:10px 12px 0;}
+  .seg{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,.22);overflow:hidden;}
+  .seg i{display:block;height:100%;width:0%;background:var(--red-bright);border-radius:3px;}
   .seg.done i{width:100%;}
   .seg.active i{width:0%;animation:fill 6s linear forwards;}
   @keyframes fill{to{width:100%;}}
 
-  .topnav{
-    position:absolute;top:22px;left:0;right:0;z-index:30;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:8px 14px;
-  }
+  .topnav{position:absolute;top:22px;left:0;right:0;z-index:30;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;}
   .whoami{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;}
-  .avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1ED760,#0a5c2b);display:grid;place-items:center;font-size:12px;font-weight:800;color:#04240f;}
+  .avatar{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff3b3b,#5c0000);display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;border:1px solid rgba(255,255,255,.3);}
   .closeX{color:#fff;opacity:.85;font-size:20px;line-height:1;padding:4px 8px;}
 
   .tapzone{position:absolute;inset:0;top:0;display:flex;z-index:10;}
   .tapzone .half{flex:1;}
 
-  /* ---------- Slides ---------- */
-  .slides{position:relative;height:100%;}
-  .slide{
-    position:absolute;inset:0;
-    display:flex;flex-direction:column;justify-content:center;
-    padding:0 28px;
-    opacity:0;pointer-events:none;transition:opacity .25s ease;
-  }
+  .slides{position:relative;height:100%;z-index:5;}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 28px;opacity:0;pointer-events:none;transition:opacity .25s ease;}
   .slide.show{opacity:1;pointer-events:auto;}
 
-  .eyebrow{
-    color:var(--green-bright);font-weight:800;letter-spacing:.14em;
-    font-size:12px;text-transform:uppercase;margin-bottom:14px;
-  }
-  h1.headline{
-    font-size:clamp(34px,10vw,54px);
-    line-height:.98;letter-spacing:-.03em;font-weight:800;
-    margin:0 0 16px;
-  }
-  .sub{color:#eaeaea;font-size:16px;line-height:1.5;margin:0;max-width:34ch;}
-  .accent{color:var(--green-bright);}
-
-  .bignum{font-size:clamp(64px,22vw,120px);font-weight:800;line-height:.9;letter-spacing:-.04em;margin:6px 0 4px;}
-  .unit{color:var(--muted);font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:.08em;}
+  .eyebrow{font-family:var(--font-body);color:var(--red-bright);font-weight:800;letter-spacing:.14em;font-size:12px;text-transform:uppercase;margin-bottom:14px;text-shadow:0 0 12px rgba(255,42,42,.55);}
+  .headline{font-family:var(--font-display);font-weight:400;font-size:clamp(36px,11vw,58px);line-height:.95;letter-spacing:.01em;margin:0 0 16px;text-shadow:0 0 18px rgba(225,6,0,.4),2px 2px 0 rgba(0,0,0,.5);}
+  .sub{color:#f1dede;font-size:16px;line-height:1.5;margin:0;max-width:34ch;}
+  .accent{color:var(--red-bright);}
 
   .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px;}
-  .stat{background:var(--card-2);border-radius:14px;padding:16px;}
+  .stat{background:var(--card-2);border:1px solid rgba(225,6,0,.25);border-radius:14px;padding:16px;}
   .stat .k{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;}
-  .stat .v{font-size:24px;font-weight:800;margin-top:6px;}
+  .stat .v{font-family:var(--font-display);font-weight:400;font-size:30px;letter-spacing:.01em;margin-top:4px;}
 
-  .track{
-    display:flex;align-items:center;gap:16px;background:var(--card-2);
-    border-radius:16px;padding:16px;margin-top:22px;
-  }
-  .cover{
-    width:64px;height:64px;flex:0 0 64px;border-radius:6px;
-    background:linear-gradient(135deg,#1ED760,#0f5c2e);
-    display:grid;place-items:center;font-size:26px;color:#04240f;
-  }
+  .track{display:flex;align-items:center;gap:16px;background:var(--card-2);border:1px solid rgba(225,6,0,.25);border-radius:16px;padding:16px;margin-top:22px;}
+  .cover{width:64px;height:64px;flex:0 0 64px;border-radius:6px;background:radial-gradient(circle at 30% 25%,#ff3b3b,#3a0000);display:grid;place-items:center;font-size:24px;}
   .trackmeta{min-width:0;}
   .trackname{font-weight:800;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .trackartist{color:var(--muted);font-size:13px;margin-top:2px;}
-  .playbtn{
-    margin-left:auto;flex:0 0 auto;width:40px;height:40px;border-radius:50%;
-    background:var(--green);border:0;display:grid;place-items:center;color:#000;font-size:15px;cursor:pointer;
-  }
-  .progressline{height:3px;background:#3a3a3a;border-radius:3px;margin-top:14px;overflow:hidden;}
-  .progressline i{display:block;height:100%;width:0%;background:var(--green-bright);border-radius:3px;}
-  .timecaps{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:6px;}
-  .caption{color:var(--muted);font-size:13px;margin-top:14px;min-height:18px;}
 
-  .personality-badge{
-    display:inline-flex;align-items:center;gap:8px;background:var(--card-2);
-    border-radius:999px;padding:10px 16px;margin-top:20px;font-weight:800;font-size:14px;
-  }
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--green-bright);}
+  .spotify-embed-wrap{margin-top:14px;border-radius:14px;overflow:hidden;border:1px solid rgba(225,6,0,.25);}
+  .caption{color:var(--muted);font-size:13px;margin-top:12px;min-height:18px;}
+
+  .badge{display:inline-flex;align-items:center;gap:8px;background:var(--card-2);border:1px solid rgba(225,6,0,.25);border-radius:999px;padding:10px 16px;margin-top:20px;font-weight:800;font-size:14px;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--red-bright);box-shadow:0 0 8px var(--red-bright);}
 
   .bottomcta{position:absolute;left:0;right:0;bottom:0;z-index:30;padding:16px 20px calc(20px + env(safe-area-inset-bottom));}
-  .sharebtn{
-    width:100%;border:0;border-radius:999px;background:var(--white);color:#000;
-    font-weight:800;font-size:15px;padding:15px;cursor:pointer;
-  }
+  .sharebtn{width:100%;border:0;border-radius:999px;background:var(--red);color:#fff;font-weight:800;font-size:15px;padding:15px;cursor:pointer;box-shadow:0 0 22px rgba(225,6,0,.45);}
   .sharebtn:active{transform:scale(.98);}
 
-  .logo{
-    position:absolute;bottom:76px;left:0;right:0;text-align:center;z-index:20;
-    display:flex;align-items:center;justify-content:center;gap:6px;color:var(--muted);font-size:12px;font-weight:700;
-  }
-  .logo svg{width:16px;height:16px;}
+  .footer-disclaimer{position:absolute;bottom:76px;left:0;right:0;text-align:center;color:#5c3a3a;font-size:10px;padding:0 24px;z-index:5;}
 
-  .footer-disclaimer{
-    position:absolute;bottom:100px;left:0;right:0;text-align:center;color:#555;font-size:10px;padding:0 24px;z-index:5;
-  }
-
-  /* slide-specific backgrounds, each a distinct Wrapped-style plate */
-  #s1{background:radial-gradient(120% 90% at 20% 0%,#1a1a1a 0%,#000 60%);}
-  #s2{background:linear-gradient(160deg,#0b3b1e 0%,#000 65%);}
+  #s1{background:radial-gradient(120% 90% at 20% 0%,#1a0303 0%,#000 62%);}
+  #s2{background:linear-gradient(160deg,#2b0505 0%,#000 65%);}
   #s3{background:#000;}
-  #s4{background:linear-gradient(160deg,#141414 0%,#000 70%);}
-  #s5{background:radial-gradient(120% 80% at 80% 100%,#123521 0%,#000 60%);}
-  #s6{background:linear-gradient(160deg,#101010 0%,#000 70%);}
+  #s4{background:linear-gradient(160deg,#1a0303 0%,#000 70%);}
+  #s5{background:radial-gradient(120% 80% at 80% 100%,#2b0505 0%,#000 60%);}
+  #s6{background:linear-gradient(160deg,#100000 0%,#000 70%);}
 
   @media(min-width:461px){
-    .phone{border-radius:36px;box-shadow:0 0 0 10px #111,0 30px 60px rgba(0,0,0,.6);margin-top:2vh;height:96vh;}
+    .phone{border-radius:36px;box-shadow:0 0 0 10px #0a0000,0 30px 70px rgba(225,6,0,.15);margin-top:2vh;height:96vh;}
+  }
+
+  /* ---------- Entry portal ---------- */
+  .portal{
+    position:absolute;inset:0;z-index:50;background:#000;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:40px 30px;text-align:center;
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .portal.hide{opacity:0;pointer-events:none;transform:scale(1.06);}
+  .portal-glow{
+    position:absolute;inset:0;
+    background:radial-gradient(circle at 50% 50%, rgba(225,6,0,.18) 0%, rgba(0,0,0,0) 60%);
+    animation:pulseglow 2.6s ease-in-out infinite;
+  }
+  @keyframes pulseglow{0%,100%{opacity:.5;}50%{opacity:1;}}
+  .terminal{
+    position:relative;font-family:var(--font-mono);
+    color:var(--red-bright);font-size:12.5px;line-height:2;text-align:left;
+    min-height:120px;white-space:pre-wrap;max-width:320px;
+  }
+  .terminal .cursor{display:inline-block;width:7px;height:13px;background:var(--red-bright);vertical-align:middle;animation:blink 1s steps(1) infinite;margin-left:2px;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .portal-title{
+    position:relative;font-family:var(--font-display);font-weight:400;font-size:clamp(34px,11vw,52px);letter-spacing:.02em;
+    line-height:1.02;margin-top:22px;opacity:0;transform:translateY(6px);
+    transition:opacity .7s ease, transform .7s ease;
+    text-shadow:0 0 26px rgba(255,42,42,.65),2px 2px 0 rgba(0,0,0,.5);
+  }
+  .portal-title.show{opacity:1;transform:translateY(0);}
+  .portal-sub{
+    position:relative;color:var(--muted);font-size:14px;margin-top:10px;max-width:30ch;
+    opacity:0;transition:opacity .7s ease .15s;
+  }
+  .portal-sub.show{opacity:1;}
+  .enterbtn{
+    position:relative;margin-top:30px;border:0;border-radius:999px;background:var(--red);
+    color:#fff;font-weight:800;font-size:15px;padding:15px 30px;cursor:pointer;
+    box-shadow:0 0 26px rgba(225,6,0,.55);
+    opacity:0;transform:translateY(10px);transition:opacity .5s ease, transform .5s ease;
+  }
+  .enterbtn.show{opacity:1;transform:translateY(0);}
+  .enterbtn:active{transform:scale(.97);}
+
+  .flash{
+    position:absolute;inset:0;z-index:60;background:#fff;opacity:0;pointer-events:none;
+  }
+  .flash.go{animation:flashpop .45s ease-out forwards;}
+  @keyframes flashpop{
+    0%{opacity:0;}
+    12%{opacity:.9;background:#fff;}
+    30%{opacity:.6;background:var(--red-bright);}
+    100%{opacity:0;}
   }
 </style>
 </head>
 <body>
 <div class="phone" id="phone">
 
+  <div class="flash" id="flash"></div>
+
+  <div class="portal" id="portal">
+    <div class="portal-glow"></div>
+    <div class="terminal" id="terminal"><span id="termText"></span><span class="cursor"></span></div>
+    <div class="portal-title" id="portalTitle">YOU'VE ENTERED<br>THE SPIDER-VERSE</div>
+    <p class="portal-sub" id="portalSub">Something's crawling nearby. Tap in if you dare.</p>
+    <button class="enterbtn" id="enterBtn">SWING IN →</button>
+  </div>
+
+  <div class="nightsky"></div>
+  <div class="moon"></div>
+
+  <div class="webbg">
+    <svg viewBox="0 0 460 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#ff2a2a" stroke-width="1" fill="none" opacity=".5">
+        <circle cx="20" cy="0" r="60"/><circle cx="20" cy="0" r="130"/><circle cx="20" cy="0" r="210"/><circle cx="20" cy="0" r="300"/>
+        <line x1="20" y1="0" x2="-100" y2="120"/>
+        <line x1="20" y1="0" x2="60" y2="260"/>
+        <line x1="20" y1="0" x2="220" y2="60"/>
+        <line x1="20" y1="0" x2="-40" y2="320"/>
+        <line x1="20" y1="0" x2="150" y2="240"/>
+      </g>
+      <g stroke="#ff2a2a" stroke-width="1" fill="none" opacity=".4">
+        <circle cx="450" cy="900" r="70"/><circle cx="450" cy="900" r="150"/><circle cx="450" cy="900" r="230"/>
+        <line x1="450" y1="900" x2="300" y2="760"/>
+        <line x1="450" y1="900" x2="420" y2="600"/>
+        <line x1="450" y1="900" x2="230" y2="840"/>
+      </g>
+      <!-- a few extra loose strands drifting across the middle of the scene -->
+      <g stroke="#ffffff" stroke-width="0.6" fill="none" opacity=".18">
+        <path d="M0 420 C 120 460, 340 380, 460 440"/>
+        <path d="M0 520 C 140 500, 300 560, 460 520"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- corner cobwebs -->
+  <svg class="corner-web tl" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#f0f0f0" stroke-width="1" fill="none">
+      <path d="M0 0 Q 30 10 20 40 Q 10 65 0 60"/>
+      <path d="M0 0 Q 45 20 40 55 Q 35 85 0 90"/>
+      <path d="M0 0 Q 60 30 60 70 Q 60 100 0 118"/>
+      <path d="M0 0 L 20 40"/><path d="M0 0 L 40 55"/><path d="M0 0 L 60 70"/>
+      <path d="M0 20 L 30 35"/><path d="M0 45 L 40 55"/><path d="M0 70 L 45 68"/>
+    </g>
+  </svg>
+  <svg class="corner-web br" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#f0f0f0" stroke-width="1" fill="none">
+      <path d="M0 0 Q 30 10 20 40 Q 10 65 0 60"/>
+      <path d="M0 0 Q 45 20 40 55 Q 35 85 0 90"/>
+      <path d="M0 0 Q 60 30 60 70 Q 60 100 0 118"/>
+      <path d="M0 0 L 20 40"/><path d="M0 0 L 40 55"/><path d="M0 0 L 60 70"/>
+      <path d="M0 20 L 30 35"/><path d="M0 45 L 40 55"/><path d="M0 70 L 45 68"/>
+    </g>
+  </svg>
+
+  <!-- dangling spiders -->
+  <svg class="dangler d1" width="26" height="120" viewBox="0 0 26 120" xmlns="http://www.w3.org/2000/svg">
+    <line class="thread" x1="13" y1="0" x2="13" y2="80"/>
+    <g fill="#0a0a0a">
+      <ellipse cx="13" cy="94" rx="7" ry="9"/>
+      <circle cx="13" cy="83" r="5"/>
+      <g stroke="#0a0a0a" stroke-width="1.4">
+        <line x1="7" y1="88" x2="0" y2="82"/><line x1="7" y1="94" x2="0" y2="98"/>
+        <line x1="19" y1="88" x2="26" y2="82"/><line x1="19" y1="94" x2="26" y2="98"/>
+      </g>
+    </g>
+  </svg>
+  <svg class="dangler d2" width="22" height="90" viewBox="0 0 22 90" xmlns="http://www.w3.org/2000/svg">
+    <line class="thread" x1="11" y1="0" x2="11" y2="55"/>
+    <g fill="#0a0a0a">
+      <ellipse cx="11" cy="66" rx="6" ry="7"/>
+      <circle cx="11" cy="57" r="4"/>
+      <g stroke="#0a0a0a" stroke-width="1.2">
+        <line x1="6" y1="60" x2="0" y2="55"/><line x1="6" y1="65" x2="0" y2="70"/>
+        <line x1="16" y1="60" x2="22" y2="55"/><line x1="16" y1="65" x2="22" y2="70"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="embers" id="embers"></div>
+  <div class="fog"></div>
+  <svg class="swinger" viewBox="0 0 120 200" width="70" height="120" xmlns="http://www.w3.org/2000/svg">
+    <line x1="60" y1="0" x2="60" y2="70" stroke="#e5e5e5" stroke-width="1"/>
+    <g fill="#0a0a0a" stroke="#ff2a2a" stroke-width="1.5">
+      <ellipse cx="60" cy="88" rx="12" ry="16"/>
+      <circle cx="60" cy="66" r="10"/>
+      <line x1="52" y1="80" x2="30" y2="60"/>
+      <line x1="68" y1="80" x2="90" y2="100"/>
+      <line x1="54" y1="102" x2="40" y2="140"/>
+      <line x1="66" y1="102" x2="82" y2="150"/>
+    </g>
+  </svg>
+
   <div class="storybar" id="storybar"></div>
   <div class="topnav">
-    <div class="whoami">
-      <div class="avatar">N</div>
-      Nikhil's 2026 Wrapped
-    </div>
+    <div class="whoami"><div class="avatar">N</div> Nikhil's Spooky Wrapped</div>
     <div class="closeX">✕</div>
   </div>
 
@@ -163,30 +321,32 @@
   <div class="slides">
 
     <section class="slide show" id="s1">
-      <div class="eyebrow">Your year in music</div>
-      <h1 class="headline">Nikhil,<br>you were<br><span class="accent">something.</span></h1>
-      <p class="sub">We analysed absolutely none of your listening data and still arrived at some very confident conclusions.</p>
+      <div class="eyebrow">Happy Halloween</div>
+      <h1 class="headline">Nikhil rose<br>from the<br><span class="accent">grave...</span></h1>
+      <p class="sub">Bitten by a radioactive deadline. Now he swings from one procrastination to the next. Tap to begin.</p>
     </section>
 
     <section class="slide" id="s2">
       <div class="eyebrow">Your top genre</div>
-      <div class="bignum" style="font-size:clamp(30px,9vw,46px);">Academic Panic™</div>
-      <p class="sub">A niche but prolific scene. You were, statistically, its only listener.</p>
+      <div class="headline" style="font-size:clamp(28px,8vw,42px);">Academic Panic™</div>
+      <p class="sub">A niche but prolific scene, streamed exclusively at 2am the night before things are due.</p>
     </section>
 
     <section class="slide" id="s3">
-      <div class="eyebrow">Your top track</div>
+      <div class="eyebrow">Now haunting your speakers</div>
       <div class="track">
-        <div class="cover">▶</div>
+        <div class="cover">🕸️</div>
         <div class="trackmeta">
-          <div class="trackname">I'll Do It Tomorrow</div>
-          <div class="trackartist">Nikhil • 2026 Remaster</div>
+          <div class="trackname">Loser</div>
+          <div class="trackartist">Tame Impala</div>
         </div>
-        <button class="playbtn" id="play" aria-label="Play preview">▶</button>
       </div>
-      <div class="progressline"><i id="playfill"></i></div>
-      <div class="timecaps"><span id="tcur">0:00</span><span>0:03</span></div>
-      <div class="caption" id="caption">Tap play to stream your #1 track.</div>
+      <div class="spotify-embed-wrap">
+        <iframe id="spotifyFrame" style="border-radius:14px" src="https://open.spotify.com/embed/track/3RmFPuTTAjSQ2pbEd2j9oA?utm_source=generator&theme=0"
+          width="100%" height="80" frameBorder="0" allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+      <div class="caption" id="caption">Tap the green ▶ in the black bar — not the cover art or title, those jump to the Spotify app.</div>
     </section>
 
     <section class="slide" id="s4">
@@ -201,36 +361,104 @@
 
     <section class="slide" id="s5">
       <div class="eyebrow">Your listening personality</div>
-      <h1 class="headline" style="font-size:clamp(28px,8vw,40px);">The<br>"I'll Figure It Out"</h1>
-      <p class="sub">You don't always know what's happening. But somehow, you're usually involved.</p>
-      <div class="personality-badge"><span class="dot"></span>1 of 500 personality types</div>
+      <h1 class="headline" style="font-size:clamp(26px,8vw,38px);">Friendly<br>Neighborhood<br><span class="accent">"I'll Figure It Out"</span></h1>
+      <p class="sub">You don't always know what's happening. But somehow, you're always swinging in at the last second.</p>
+      <div class="badge"><span class="dot"></span>1 of 500 personality types</div>
     </section>
 
     <section class="slide" id="s6">
-      <div class="eyebrow">Congratulations</div>
-      <h1 class="headline" style="font-size:clamp(30px,8vw,42px);">Top <span class="accent">0.01%</span></h1>
-      <p class="sub">…of people who say "I'm almost there" while still at home.</p>
+      <div class="eyebrow">Wait...</div>
+      <h1 class="headline" style="font-size:clamp(30px,9vw,44px);">It's me.<br><span class="accent">I'm Spider-Man.</span></h1>
+      <p class="sub">Your friendly neighborhood web-slinger, hiding in plain sight all night. Happy Halloween. 🕷️</p>
     </section>
 
   </div>
 
-  <div class="logo">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="11" fill="#1DB954"/>
-      <path d="M6.5 9.2c3.6-1.1 8-.7 11 1.1M7 12.4c3-.9 6.7-.6 9.2.9M7.4 15.4c2.5-.7 5.4-.5 7.5.7" stroke="#000" stroke-width="1.4" stroke-linecap="round"/>
-    </svg>
-    Wrapped
-  </div>
-  <div class="footer-disclaimer">Unofficial &amp; fictional fan page. Not affiliated with Spotify AB.</div>
+  <div class="footer-disclaimer">Unofficial fan page made for fun — not affiliated with Marvel, Sony, Spotify or Tame Impala.</div>
 
   <div class="bottomcta">
-    <button class="sharebtn" id="shareBtn">Share your Wrapped</button>
+    <button class="sharebtn" id="shareBtn">Trick or Treat — Share this</button>
   </div>
 
 </div>
 
 <script>
 (function(){
+  // spawn floating embers
+  const emberHost = document.getElementById('embers');
+  const EMBER_COUNT = 14;
+  for(let i=0;i<EMBER_COUNT;i++){
+    const e = document.createElement('div');
+    e.className = 'ember';
+    e.style.left = Math.random()*100 + '%';
+    e.style.animationDuration = (6 + Math.random()*6) + 's';
+    e.style.animationDelay = (Math.random()*8) + 's';
+    e.style.opacity = (0.4 + Math.random()*0.5).toString();
+    emberHost.appendChild(e);
+  }
+
+  // ---------- Entry portal: terminal boot sequence ----------
+  const termText = document.getElementById('termText');
+  const portalTitle = document.getElementById('portalTitle');
+  const portalSub = document.getElementById('portalSub');
+  const enterBtn = document.getElementById('enterBtn');
+  const portal = document.getElementById('portal');
+  const flash = document.getElementById('flash');
+
+  const bootLines = [
+    "INITIALIZING SPIDER-SENSE...",
+    "SCANNING NEARBY SIGNAL...",
+    "CROSS-REFERENCING KNOWN VIGILANTES...",
+    "MATCH FOUND — 99.7%",
+    "IDENTITY CONFIRMED."
+  ];
+
+  let li = 0, ci = 0;
+  function typeNext(){
+    if(li >= bootLines.length){
+      portalTitle.classList.add('show');
+      portalSub.classList.add('show');
+      enterBtn.classList.add('show');
+      return;
+    }
+    const line = bootLines[li];
+    if(ci <= line.length){
+      termText.textContent = bootLines.slice(0,li).join('\n') + (li>0?'\n':'') + line.slice(0,ci);
+      ci++;
+      setTimeout(typeNext, 22 + Math.random()*30);
+    } else {
+      li++; ci = 0;
+      setTimeout(typeNext, 260);
+    }
+  }
+  setTimeout(typeNext, 400);
+
+  // tiny procedurally-generated "web zap" sound, no external audio file involved
+  function playZap(){
+    try{
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new Ctx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(900, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.35);
+      gain.gain.setValueAtTime(0.18, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.42);
+    }catch(err){ /* audio not available, silently skip */ }
+  }
+
+  enterBtn.addEventListener('click', ()=>{
+    playZap();
+    if(navigator.vibrate){ navigator.vibrate([40,30,60]); }
+    flash.classList.add('go');
+    portal.classList.add('hide');
+    setTimeout(()=>{ startStory(); }, 260);
+  });
+
   const slides = Array.from(document.querySelectorAll('.slide'));
   const bar = document.getElementById('storybar');
   const total = slides.length;
@@ -238,7 +466,6 @@
   let timer = null;
   const DURATION = 6000;
 
-  // build progress segments
   slides.forEach(()=>{
     const seg = document.createElement('div');
     seg.className = 'seg';
@@ -269,53 +496,24 @@
   }
   function restart(){
     clearTimeout(timer);
-    if(idx < total-1){ timer = setTimeout(next, DURATION); }
+    // pause auto-advance on the music slide so the song isn't rushed
+    const onMusicSlide = slides[idx] && slides[idx].id === 's3';
+    if(idx < total-1 && !onMusicSlide){ timer = setTimeout(next, DURATION); }
   }
 
   document.querySelectorAll('.tapzone .half').forEach(h=>{
-    h.addEventListener('click', ()=>{
+    h.addEventListener('click', (e)=>{
+      // don't hijack taps meant for the embedded Spotify player
+      if(e.target.closest('.spotify-embed-wrap')) return;
       const dir = parseInt(h.dataset.dir,10);
       if(dir<0) prev(); else next();
     });
   });
 
-  render();
-  restart();
-
-  // Track "player" on slide 3
-  const playBtn = document.getElementById('play');
-  const fill = document.getElementById('playfill');
-  const tcur = document.getElementById('tcur');
-  const caption = document.getElementById('caption');
-  let playing = false, raf, start;
-
-  playBtn.addEventListener('click', (e)=>{
-    e.stopPropagation();
-    if(playing) return;
-    playing = true;
-    clearTimeout(timer); // pause story advance while "listening"
-    playBtn.textContent = '❚❚';
-    start = performance.now();
-    const durMs = 3000;
-
-    function tick(now){
-      const t = Math.min(now-start, durMs);
-      const pct = (t/durMs)*100;
-      fill.style.width = pct+'%';
-      tcur.textContent = '0:0'+ (t/1000).toFixed(0<t?1:0).toString().slice(0,1) === '0' ? '0:00' : tcur.textContent;
-      tcur.textContent = '0:0' + Math.min(3, Math.floor(t/1000));
-      if(t < durMs){
-        raf = requestAnimationFrame(tick);
-      } else {
-        playBtn.textContent = '▶';
-        playing = false;
-        caption.textContent = '“Wait, what was I doing?” — Nikhil, 2026';
-        restart();
-      }
-    }
-    caption.textContent = 'Now playing…';
-    raf = requestAnimationFrame(tick);
-  });
+  function startStory(){
+    render();
+    restart();
+  }
 
   document.getElementById('shareBtn').addEventListener('click', (e)=>{
     e.stopPropagation();
