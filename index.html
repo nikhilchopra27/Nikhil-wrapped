@@ -207,12 +207,56 @@
     30%{opacity:.6;background:var(--red-bright);}
     100%{opacity:0;}
   }
+
+  /* ---------- Crack shatter transition (between slides) ---------- */
+  .shatter{position:absolute;inset:0;z-index:45;pointer-events:none;opacity:0;}
+  .shatter svg{width:100%;height:100%;}
+  .shatter.go{animation:shatterpop .38s ease-out forwards;}
+  @keyframes shatterpop{
+    0%{opacity:0;transform:scale(.98);}
+    18%{opacity:1;transform:scale(1.01);}
+    100%{opacity:0;transform:scale(1);}
+  }
+  .phone.shk{animation:shakeit .28s linear;}
+  @keyframes shakeit{
+    0%,100%{transform:translate(0,0);}
+    20%{transform:translate(-3px,2px);}
+    40%{transform:translate(3px,-2px);}
+    60%{transform:translate(-2px,1px);}
+    80%{transform:translate(2px,-1px);}
+  }
+
+  /* ---------- Swipe hint on first slide ---------- */
+  .swipehint{
+    position:absolute;left:50%;bottom:150px;z-index:12;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+    transform:translateX(-50%);opacity:0;transition:opacity .6s ease .3s;pointer-events:none;
+  }
+  .swipehint.show{opacity:1;}
+  .swipehint .hand{font-size:22px;animation:swipemove 1.6s ease-in-out infinite;}
+  @keyframes swipemove{
+    0%,100%{transform:translateX(0);opacity:.5;}
+    50%{transform:translateX(14px);opacity:1;}
+  }
 </style>
 </head>
 <body>
 <div class="phone" id="phone">
 
   <div class="flash" id="flash"></div>
+  <div class="shatter" id="shatter">
+    <svg viewBox="0 0 300 650" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#ffffff" stroke-width="1.4" fill="none" opacity=".9">
+        <path d="M150 325 L60 120"/><path d="M150 325 L230 90"/><path d="M150 325 L40 300"/>
+        <path d="M150 325 L270 260"/><path d="M150 325 L110 560"/><path d="M150 325 L210 590"/>
+        <path d="M150 325 L20 480"/><path d="M150 325 L280 470"/>
+        <path d="M60 120 L20 60"/><path d="M60 120 L100 40"/>
+        <path d="M230 90 L280 40"/><path d="M270 260 L300 210"/>
+        <path d="M110 560 L70 620"/><path d="M210 590 L250 640"/>
+      </g>
+    </svg>
+  </div>
 
   <div class="portal" id="portal">
     <div class="portal-glow"></div>
@@ -324,6 +368,7 @@
       <div class="eyebrow">Happy Halloween</div>
       <h1 class="headline">Nikhil rose<br>from the<br><span class="accent">grave...</span></h1>
       <p class="sub">Bitten by a radioactive deadline. Now he swings from one procrastination to the next. Tap to begin.</p>
+      <div class="swipehint" id="swipehint"><span class="hand">👉</span>Tap to continue</div>
     </section>
 
     <section class="slide" id="s2">
@@ -451,8 +496,72 @@
     }catch(err){ /* audio not available, silently skip */ }
   }
 
+  // short procedurally-generated "web-thwip" tap sound
+  function playThwip(){
+    try{
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new Ctx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1400, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(500, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.14, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    }catch(err){ /* audio not available, silently skip */ }
+  }
+
+  // brief crack-shatter + shake, played on every slide change
+  function playShatter(){
+    const shatter = document.getElementById('shatter');
+    const phone = document.getElementById('phone');
+    shatter.classList.remove('go'); void shatter.offsetWidth; shatter.classList.add('go');
+    phone.classList.remove('shk'); void phone.offsetWidth; phone.classList.add('shk');
+  }
+
+  // device tilt parallax on the web layers (falls back silently if unsupported)
+  const parallaxEls = [
+    { el: document.querySelector('.webbg'), strength: 8 },
+    { el: document.querySelector('.moon'), strength: 5 },
+    { el: document.querySelector('.dangler.d1'), strength: 10 },
+    { el: document.querySelector('.dangler.d2'), strength: 12 },
+    { el: document.querySelector('.swinger'), strength: 6 }
+  ].filter(p => p.el);
+
+  function applyTilt(gamma, beta){
+    const gx = Math.max(-30, Math.min(30, gamma || 0));
+    const gy = Math.max(-30, Math.min(30, (beta||0) - 30));
+    parallaxEls.forEach(p=>{
+      const tx = (gx/30) * p.strength;
+      const ty = (gy/30) * p.strength;
+      p.el.style.transform = (p.el.style.transform||'').replace(/translate3d\([^)]*\)\s*/,'') ;
+      p.el.style.transform += ` translate3d(${tx}px, ${ty}px, 0)`;
+    });
+  }
+
+  function enableTilt(){
+    window.addEventListener('deviceorientation', (e)=>{
+      applyTilt(e.gamma, e.beta);
+    });
+  }
+
+  function requestTiltPermission(){
+    const DOE = window.DeviceOrientationEvent;
+    if(DOE && typeof DOE.requestPermission === 'function'){
+      DOE.requestPermission().then(state=>{
+        if(state === 'granted'){ enableTilt(); }
+      }).catch(()=>{ /* denied or unsupported, page still works fine */ });
+    } else {
+      enableTilt();
+    }
+  }
+
   enterBtn.addEventListener('click', ()=>{
     playZap();
+    requestTiltPermission();
     if(navigator.vibrate){ navigator.vibrate([40,30,60]); }
     flash.classList.add('go');
     portal.classList.add('hide');
@@ -487,11 +596,11 @@
   }
 
   function next(){
-    if(idx < total-1){ idx++; render(); restart(); }
+    if(idx < total-1){ idx++; playThwip(); playShatter(); render(); restart(); hideSwipeHint(); }
     else { idx = total-1; render(); clearTimeout(timer); }
   }
   function prev(){
-    if(idx > 0){ idx--; render(); restart(); }
+    if(idx > 0){ idx--; playThwip(); playShatter(); render(); restart(); hideSwipeHint(); }
     else { render(); restart(); }
   }
   function restart(){
@@ -513,6 +622,13 @@
   function startStory(){
     render();
     restart();
+    const hint = document.getElementById('swipehint');
+    if(hint){ setTimeout(()=> hint.classList.add('show'), 400); }
+  }
+
+  function hideSwipeHint(){
+    const hint = document.getElementById('swipehint');
+    if(hint){ hint.classList.remove('show'); }
   }
 
   document.getElementById('shareBtn').addEventListener('click', (e)=>{
