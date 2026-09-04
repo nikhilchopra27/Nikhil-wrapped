@@ -111,7 +111,7 @@
   .tapzone{position:absolute;inset:0;top:0;display:flex;z-index:10;}
   .tapzone .half{flex:1;}
 
-  .slides{position:relative;height:100%;z-index:5;}
+  .slides{position:relative;height:100%;z-index:15;}
   .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 28px;opacity:0;pointer-events:none;transition:opacity .25s ease;}
   .slide.show{opacity:1;pointer-events:auto;}
 
@@ -643,7 +643,21 @@
     const onPauseSlide = slides[idx] && pauseIds.includes(slides[idx].id);
     if(idx < total-1 && !onPauseSlide){ timer = setTimeout(next, DURATION); }
   }
+document.querySelectorAll('.slide').forEach(slide=>{
+  slide.addEventListener('click', (e)=>{
+    if(e.target.closest('.igcard')) return;
+    if(e.target.closest('.bottomcta')) return;
 
+    const rect = slide.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    if(x < rect.width / 2){
+      prev();
+    } else {
+      next();
+    }
+  });
+});
   document.querySelectorAll('.tapzone .half').forEach(h=>{
     h.addEventListener('click', (e)=>{
       // don't hijack taps meant for the Instagram card
